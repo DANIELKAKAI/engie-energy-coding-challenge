@@ -1,3 +1,4 @@
+import os
 from typing import Optional
 from fastapi import FastAPI
 
@@ -11,9 +12,13 @@ from sqlalchemy.orm import relationship
 from typing import List, Optional
 from pydantic import BaseModel
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 Base = declarative_base()
 
-engine = create_engine('mysql://testuser:pass@localhost/items')
+engine = create_engine(f'mysql://{os.getenv("DB_USER")}:{os.getenv("DB_PASSWORD")}@{os.getenv("DB_HOST")}/{os.getenv("DB_NAME")}')
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
@@ -57,6 +62,7 @@ class User(Base):
     email = Column(String(50), unique=True, index=True)
     hashed_password = Column(String(50))
     is_active = Column(Boolean, default=True)
+    items = relationship("Item", back_populates="owner")
 
 class Item(Base):
     __tablename__ = "items"
@@ -66,6 +72,7 @@ class Item(Base):
     status = Column(String(50))
     description = Column(String(50))
     owner_id = Column(Integer)
+    owner = relationship("User", back_populates="items")
 
 class ItemHistory(Base):
     __tablename__ = "item_history"
