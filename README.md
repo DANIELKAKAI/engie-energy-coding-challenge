@@ -36,3 +36,161 @@ If the DB is accessible, tables will be automatically created when the app start
 
 ### auto generated docs
 http://127.0.0.1:8000/docs
+
+
+### Start the application with docker
+
+`docker compose up`
+
+### Run tests
+
+`pytest tests`
+
+### Formatting
+
+`black -l 79 .`
+
+## Rest Api requests
+
+1. Add user
+
+```curl --location 'http://127.0.0.1:8000/users' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+  "email": "dany@gmail.com",
+  "password": "password"
+}'
+```
+
+Response:
+```
+{
+    "email": "dany@gmail.com",
+    "id": 7,
+    "is_active": true,
+    "items": []
+}
+```
+
+2. Create Item
+```commandline
+curl --location 'http://127.0.0.1:8000/users/1/items' \
+--header 'Content-Type: application/json' \
+--data '{
+  "title": "title 11",
+  "description": "description 11"
+}'
+```
+
+Response:
+```commandline
+{
+    "title": "title 11",
+    "description": "description 11",
+    "id": 3,
+    "owner_id": 1,
+    "status": "NEW",
+    "item_history": []
+}
+```
+
+3. Fetch Items
+```commandline
+curl --location 'http://127.0.0.1:8000/items/?status=EOL'
+```
+
+Response:
+```commandline
+[
+    {
+        "title": "title 11",
+        "description": "description 11",
+        "id": 1,
+        "owner_id": 2,
+        "status": "EOL",
+        "item_history": [
+            {
+                "id": 1,
+                "old_assignee_id": 1,
+                "new_assignee_id": 2,
+                "old_status": "NEW",
+                "new_status": "NEW"
+            },
+            ...
+        ]
+    }
+]
+```
+
+4. Reassign Item
+```commandline
+curl --location 'http://127.0.0.1:8000/reassign_item/1/' \
+--header 'Content-Type: application/json' \
+--data '{
+    "id":1
+}'
+```
+
+Response:
+```commandline
+{
+    "title": "title 11",
+    "description": "description 11",
+    "id": 1,
+    "owner_id": 1,
+    "status": "EOL",
+    "item_history": [
+        {
+            "id": 4,
+            "old_assignee_id": 2,
+            "new_assignee_id": 1,
+            "old_status": "EOL",
+            "new_status": "EOL"
+        }
+        ...
+    ]
+}
+```
+
+5. Set Item status
+```commandline
+curl --location 'http://127.0.0.1:8000/item/status/1/' \
+--header 'Content-Type: application/json' \
+--data '{
+    "name":"APPROVED"
+}'
+```
+
+Response:
+```commandline
+{
+    "title": "title 11",
+    "description": "description 11",
+    "id": 1,
+    "owner_id": 1,
+    "status": "APPROVED",
+    "item_history": [
+        {
+            "id": 6,
+            "old_assignee_id": 1,
+            "new_assignee_id": 1,
+            "old_status": "EOL",
+            "new_status": "APPROVED"
+        }
+        ...
+    ]
+}
+```
+
+6. Fetch Item by Id
+```commandline
+curl --location 'http://127.0.0.1:8000/items/1'
+```
+
+## Suggestions
+
+1. Since the application is dockerized we can use AWS ECS for deployment or Kubernetes on a chosen cloud provider.
+2. Use alembic to handle database migrations
+3. Add more comprehensive tests
+4. Implement user authentication and authorization
+5. Implement more Rest Api methods like DELETE, PUT and PATCH
