@@ -13,8 +13,6 @@ class User(Base):
     hashed_password = Column(String(50))
     is_active = Column(Boolean, default=True)
     items = relationship("Item", back_populates="owner")
-    #old_assignees = relationship("ItemHistory", back_populates="old_assignee")
-    #new_assignees = relationship("ItemHistory", back_populates="new_assignee")
 
 
 class ItemStatusEnum(enum.Enum):
@@ -45,3 +43,5 @@ class ItemHistory(Base):
     old_assignee = relationship("User", foreign_keys=[old_assignee_id])
     new_assignee_id = Column(Integer, ForeignKey("users.id"))
     new_assignee = relationship("User", foreign_keys=[new_assignee_id])
+    old_status = Column(Enum(ItemStatusEnum), nullable=False)
+    new_status = Column(Enum(ItemStatusEnum), nullable=False)
