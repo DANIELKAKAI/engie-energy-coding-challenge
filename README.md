@@ -44,7 +44,7 @@ http://127.0.0.1:8000/docs
 
 ### Run tests
 
-`pytest tests`
+`pytest tests.py`
 
 ### Formatting
 
