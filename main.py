@@ -4,8 +4,8 @@ from typing import Optional
 
 from controllers import create_user, create_user_item
 from database import SessionLocal, engine
-from models import Base
-from schemas import UserCreate, ItemCreate
+from models import Base, Item, ItemHistory
+from schemas import UserCreate, ItemCreate, UserId
 
 app = FastAPI()
 
